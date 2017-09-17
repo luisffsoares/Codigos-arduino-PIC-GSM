@@ -1,0 +1,47 @@
+#include "DHT.h"
+#include <SoftwareSerial.h>
+
+#define DHTPIN A1 // pino que estamos conectado
+#define DHTTYPE DHT11 // DHT 11
+
+DHT dht(DHTPIN, DHTTYPE);
+SoftwareSerial mySerial(10, 11); // RX, TX
+
+char buffer[110];
+char temp[10];
+char humi[10];
+char num[10];
+ 
+void setup() 
+{
+  Serial.begin(9600);
+  Serial.println("DHT11 test!");
+  dht.begin();
+  mySerial.begin(4800);
+  mySerial.println("Knock-Knock");
+  mySerial.println("DHT11 test!");
+}
+ 
+void loop() 
+{
+  // A leitura da temperatura e umidade pode levar 250ms!
+  // O atraso do sensor pode chegar a 2 segundos.
+  float h = dht.readHumidity();
+  float t = dht.readTemperature();
+  // testa se retorno é valido, caso contrário algo está errado.
+    
+  dtostrf(t,3,2,temp);  //(descobrir oq isso faz)
+  dtostrf(h,3,2,humi);
+
+  if (isnan(t) || isnan(h)) 
+  {
+    Serial.println("Failed to read from DHT");
+  } 
+  else
+  {
+    String dados = "Umidade: "+h+"% |"+"Temperatura: "+t+" *C";
+    Serial.println(dados);
+   
+  }
+  delay(400);
+}
